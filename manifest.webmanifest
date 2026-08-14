@@ -1,0 +1,16 @@
+{
+  "name": "AI 정책학 — 초판 주문",
+  "short_name": "AI 정책학",
+  "description": "생성형 AI 시대의 국가전략·공공정책·거버넌스. 초판 500부 한정 주문.",
+  "lang": "ko",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0F1A30",
+  "theme_color": "#0F1A30",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
