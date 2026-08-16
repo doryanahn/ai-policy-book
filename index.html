@@ -20,6 +20,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AI 정책학">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700;900&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -571,7 +572,7 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
       <button class="qbtn qbtn--sms" id="qSend">① 주문 접수하기</button>
       <a class="qbtn qbtn--pay" href="https://qr.kakaopay.com/281006011139922161005050" target="_blank" rel="noopener">② 카카오페이로 결제</a>
     </div>
-    <p class="qnote">①을 누르면 주문 내용이 담긴 문자가 열립니다 — <b>전송만 누르세요.</b> 이어서 ②로 결제하시면 끝. 계좌이체를 원하시면 카카오뱅크 3333-38-1500436 (아이알오 출판)으로 보내주세요.</p>
+    <p class="qnote">①을 누르면 주문이 바로 접수됩니다. 이어서 ②로 결제하시면 끝. 계좌이체를 원하시면 카카오뱅크 3333-38-1500436 (아이알오 출판)으로 보내주세요.</p>
   </div>
 
   <div class="steps">
@@ -706,7 +707,7 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
 
 <script>
 (function(){
-  var PRICE=35100, PHONE='01023930088';
+  var PRICE=35100, PHONE='01023930088', NL=String.fromCharCode(10);
   var SUPABASE_URL='https://fsabqxkpkolbfpqwmwhq.supabase.co';
   var SUPABASE_KEY='sb_publishable_ctYpD92Aqd3kIConGp9HsQ_M0KfKats';
   var qty=document.getElementById('qQty'), total=document.getElementById('qTotal');
@@ -729,24 +730,14 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
     var tel=document.getElementById('qTel').value.trim();
     var q=parseInt(qty.value,10), amt=PRICE*q;
     if(!name||!addr){ alert('성함과 배송지 주소를 입력해 주세요.'); return; }
-    var body='[AI 정책학 주문]
-성함: '+name+'
-부수: '+q+'부
-금액: '+fmt(amt)+'
-주소: '+addr+(tel?'
-연락처: '+tel:'')+'
-결제: 카카오페이/계좌이체 중 선택';
+    var body='[AI 정책학 주문]'+NL+'성함: '+name+NL+'부수: '+q+'부'+NL+'금액: '+fmt(amt)+NL+'주소: '+addr+(tel?NL+'연락처: '+tel:'')+NL+'결제: 카카오페이/계좌이체 중 선택';
 
     if(SUPABASE_KEY.indexOf('sb_')!==0){ smsFallback(body); return; }
 
     btn.disabled=true; btn.textContent='접수 중...';
     fetch(SUPABASE_URL+'/rest/v1/orders',{
       method:'POST',
-      headers:{
-        'apikey':SUPABASE_KEY,
-        'Content-Type':'application/json',
-        'Prefer':'return=minimal'
-      },
+      headers:{ 'apikey':SUPABASE_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
       body:JSON.stringify({name:name,qty:q,amount:amt,address:addr,phone:tel||null})
     }).then(function(r){
       if(!r.ok) throw new Error('insert failed '+r.status);
@@ -757,7 +748,7 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
       var pay=document.querySelector('.qbtn--pay');
       if(pay){ pay.style.boxShadow='0 0 0 3px rgba(255,216,77,.6)'; }
     }).catch(function(e){
-      btn.disabled=false; btn.textContent='① 주문 문자 보내기';
+      btn.disabled=false; btn.textContent='① 주문 접수하기';
       smsFallback(body);
     });
   });
