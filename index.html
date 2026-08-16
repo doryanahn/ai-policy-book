@@ -289,6 +289,27 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
 .claimband p{font-size:15px;color:var(--slate);max-width:640px;margin:0 auto}
 @media (prefers-reduced-motion:reduce){.hero .mock img,.tick__in{animation:none}}
 
+
+/* 빠른 주문 */
+.quick{background:var(--navy);color:#E7ECF1;padding:30px 28px;margin:26px 0 10px;border-top:4px solid var(--gold)}
+.quick h3{font-family:var(--serif);font-weight:700;font-size:20px;color:#fff;margin:0 0 4px}
+.quick .qd{font-size:13px;color:#8FA2B5;margin-bottom:20px}
+.qgrid{display:grid;grid-template-columns:1fr 150px;gap:12px}
+.qgrid .full{grid-column:1/-1}
+.quick label{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:#8098B0;text-transform:uppercase;margin-bottom:6px}
+.quick input,.quick select{width:100%;background:#1B2A4A;border:1px solid #33475F;color:#fff;font-size:15px;padding:12px 13px;font-family:var(--sans);border-radius:0;-webkit-appearance:none}
+.quick input:focus,.quick select:focus{outline:none;border-color:var(--gold)}
+.qtotal{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #33475F;margin-top:16px;padding-top:14px}
+.qtotal span{font-size:13px;color:#8FA2B5}
+.qtotal b{font-family:var(--mono);font-size:26px;color:#FFD84D}
+.qbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.qbtn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;border:none;cursor:pointer;font-weight:700;font-size:14.5px;padding:14px 10px;font-family:var(--sans)}
+.qbtn--sms{background:var(--red);color:#fff}
+.qbtn--pay{background:#FEE500;color:#191919}
+.qnote{font-size:12px;color:#8FA2B5;margin-top:12px}
+.qnote b{color:#C4D0DC}
+@media (max-width:640px){.qgrid{grid-template-columns:1fr}.qbtns{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -532,6 +553,28 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
   <h2 class="sec-title">주문 안내</h2>
   <p class="sec-dek">주문 → 입금 → 서명본 발송. 세 단계면 끝납니다.</p>
 
+  
+  <div class="quick rv" id="quickorder">
+    <h3>빠른 주문 — 30초면 됩니다</h3>
+    <p class="qd">이름 · 부수 · 주소만 넣고 바로 결제하세요. 세금계산서가 필요하시면 아래 주문서를 이용해 주세요.</p>
+    <div class="qgrid">
+      <div><label>성함</label><input id="qName" type="text" placeholder="홍길동" autocomplete="name"></div>
+      <div><label>주문 부수</label><select id="qQty">
+        <option value="1">1부</option><option value="2">2부</option><option value="3">3부</option>
+        <option value="4">4부</option><option value="5">5부</option><option value="6">6부</option>
+        <option value="7">7부</option><option value="8">8부</option><option value="9">9부</option>
+      </select></div>
+      <div class="full"><label>배송지 주소 (우편번호 포함)</label><input id="qAddr" type="text" placeholder="예) 21999 인천시 연수구 ○○로 12, 101동 1001호" autocomplete="street-address"></div>
+      <div class="full"><label>연락처</label><input id="qTel" type="tel" placeholder="010-0000-0000" autocomplete="tel"></div>
+    </div>
+    <div class="qtotal"><span>입금하실 금액 (35,100원 × 부수 · 무료배송)</span><b id="qTotal">35,100원</b></div>
+    <div class="qbtns">
+      <button class="qbtn qbtn--sms" id="qSend">① 주문 접수하기</button>
+      <a class="qbtn qbtn--pay" href="https://qr.kakaopay.com/281006011139922161005050" target="_blank" rel="noopener">② 카카오페이로 결제</a>
+    </div>
+    <p class="qnote">①을 누르면 주문 내용이 담긴 문자가 열립니다 — <b>전송만 누르세요.</b> 이어서 ②로 결제하시면 끝. 계좌이체를 원하시면 카카오뱅크 3333-38-1500436 (아이알오 출판)으로 보내주세요.</p>
+  </div>
+
   <div class="steps">
     <div class="step"><div class="n">1</div><b>주문서 작성</b><span>아래 버튼으로 주문서를 작성해 주세요. 부수 · 수령 주소 · 증빙 여부를 받습니다. 카카오톡(ID: Doryan) 주문도 가능합니다.</span></div>
     <div class="step"><div class="n">2</div><b>입금</b><span>주문 완료 화면과 문자로 안내되는 계좌에 입금해 주시면 주문이 확정됩니다.</span></div>
@@ -658,6 +701,67 @@ h3{font-family:var(--serif);font-weight:700;font-size:19px;margin:34px 0 12px;co
     bar.classList.add('show');
     setTimeout(function(){bar.classList.remove('show')},12000);
   }
+})();
+</script>
+
+
+<script>
+(function(){
+  var PRICE=35100, PHONE='01023930088';
+  var SUPABASE_URL='https://fsabqxkpkolbfpqwmwhq.supabase.co';
+  var SUPABASE_KEY='sb_publishable_ctYpD92Aqd3kIConGp9HsQ_M0KfKats';
+  var qty=document.getElementById('qQty'), total=document.getElementById('qTotal');
+  if(!qty) return;
+  function fmt(n){return n.toLocaleString('ko-KR')+'원'}
+  function calc(){ total.textContent = fmt(PRICE*parseInt(qty.value,10)); }
+  qty.addEventListener('change', calc); calc();
+
+  function smsFallback(body){
+    var ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    var uri='sms:'+PHONE+(ios?'&':'?')+'body='+encodeURIComponent(body);
+    if(navigator.clipboard){ navigator.clipboard.writeText(body).catch(function(){}); }
+    location.href=uri;
+  }
+
+  document.getElementById('qSend').addEventListener('click', function(){
+    var btn=this;
+    var name=document.getElementById('qName').value.trim();
+    var addr=document.getElementById('qAddr').value.trim();
+    var tel=document.getElementById('qTel').value.trim();
+    var q=parseInt(qty.value,10), amt=PRICE*q;
+    if(!name||!addr){ alert('성함과 배송지 주소를 입력해 주세요.'); return; }
+    var body='[AI 정책학 주문]
+성함: '+name+'
+부수: '+q+'부
+금액: '+fmt(amt)+'
+주소: '+addr+(tel?'
+연락처: '+tel:'')+'
+결제: 카카오페이/계좌이체 중 선택';
+
+    if(SUPABASE_KEY.indexOf('sb_')!==0){ smsFallback(body); return; }
+
+    btn.disabled=true; btn.textContent='접수 중...';
+    fetch(SUPABASE_URL+'/rest/v1/orders',{
+      method:'POST',
+      headers:{
+        'apikey':SUPABASE_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify({name:name,qty:q,amount:amt,address:addr,phone:tel||null})
+    }).then(function(r){
+      if(!r.ok) throw new Error('insert failed '+r.status);
+      btn.textContent='✓ 주문 접수 완료';
+      btn.style.background='#1F6B4A';
+      var note=document.querySelector('.qnote');
+      if(note){ note.innerHTML='<b>'+name+'님, 주문이 접수되었습니다.</b> 이제 ②번 버튼으로 <b>'+fmt(amt)+'</b>을 보내주시면 끝입니다. 계좌이체를 원하시면 카카오뱅크 3333-38-1500436 (아이알오 출판)으로 보내주세요.'; }
+      var pay=document.querySelector('.qbtn--pay');
+      if(pay){ pay.style.boxShadow='0 0 0 3px rgba(255,216,77,.6)'; }
+    }).catch(function(e){
+      btn.disabled=false; btn.textContent='① 주문 문자 보내기';
+      smsFallback(body);
+    });
+  });
 })();
 </script>
 </body>
